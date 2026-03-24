@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StegoChat - Secure Image Steganography</title>
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #7c3aed, #a855f7);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav button:hover, .nav button.active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(168, 85, 247, 0.3));
+            padding: 60px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #7c3aed, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #7c3aed, #a855f7);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #a855f7;
+        }
+        
+        .feature-card p {
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        
+        .tool-section {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            margin-bottom: 30px;
+        }
+        
+        .tool-section.active {
+            display: block;
+        }
+        
+        .tool-section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #a855f7;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-size: 1.5rem;
+            color: #a855f7;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        .form-group select {
+            background: #1a1a2e;
+            border: 1px solid #7c3aed;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a855f7'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px;
+        }
+
+        .form-group select option {
+            background: #1a1a2e;
+            color: white;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-group input::placeholder, .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .file-input-box {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            position: relative;
+        }
+        
+        .file-input-box input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: block;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .recommendation {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 10px;
+        }
+
+        #encrypt-image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+        }
+
+        .key-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 80%;
+            padding: 15px 30px;
+            margin: 15px auto;
+            border-radius: 12px;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+        
+        .key-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .key-icon {
+            font-size: 24px;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-message {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            color: #86efac;
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+        
+        .download-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .download-link:hover {
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.6;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .hero {
+                padding: 40px 20px;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .tool-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="https://github.com/prashant041204/cryptchat/blob/main/WhatsApp%20Image%202025-09-21%20at%202.16.45%20PM.jpeg?raw=true" alt="Crypt Chat Logo" class="logo-icon" style="border-radius: 12px;">
+            StegoChat
+        </div>
+        <nav class="nav">
+            <button id="startBtn" class="active">Start</button>
+            <button id="encryptBtn">Encrypt</button>
+            <button id="decryptBtn">Decrypt</button>
+            <button id="keygenBtn">Key Generation</button>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section id="startSection" class="hero">
+            <h1>StegoChat</h1>
+            <p>Securely hide messages inside images and reveal them with a password or key. Choose from multiple embedding models for flexibility and control.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="showSection('encrypt')">Get Started</button>
+                <button class="btn btn-secondary" onclick="showSection('keygen')">Generate Keys</button>
+            </div>
+        </section>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>Encrypt</h3>
+                <p>Insert an image, add your message, choose a model, set a password or key, and get an encoded image.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Decrypt</h3>
+                <p>Insert an encoded image, select the model, enter the password or key, and reveal the hidden message.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Key Generation</h3>
+                <p>Generate unique RSA public and private key pairs for use with the secure Hybrid encryption model.</p>
+            </div>
+        </div>
+
+        <section id="encryptSection" class="tool-section">
+            <h2>Encrypt Your Message</h2>
+            <div class="form-group">
+                <label for="encrypt-image">Insert Image</label>
+                <div class="file-input-box">
+                    <input type="file" id="encrypt-image" accept="image/png">
+                    <label for="encrypt-image" class="file-input-label">Drag & drop a PNG image or click to browse</label>
+                    <p class="recommendation">Only lossless PNG format is supported.</p>
+                    <img id="encrypt-image-preview" src="#" alt="Image Preview">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="encrypt-message">Message</label>
+                <textarea id="encrypt-message" placeholder="Type your secret message here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="encrypt-model">Encryption Model</label>
+                <select id="encrypt-model">
+                    <option value="chacha20">ChaCha20</option>
+                    <option value="aes">AES</option>
+                    <option value="hybrid">Hybrid (RSA + AES)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="encrypt-steganography-model">Steganography Model</label>
+                <select id="encrypt-steganography-model">
+                    <option value="lsb">LSB (Least Significant Bit)</option>
+                    <option value="dct">DCT (Discrete Cosine Transform)</option>
+                </select>
+            </div>
+
+            <div id="encrypt-password-group" class="form-group">
+                <label for="encrypt-password">Password</label>
+                <input type="password" id="encrypt-password" placeholder="Enter a password to protect the message">
+            </div>
+
+            <div id="encrypt-key-group" class="form-group hidden">
+                <label for="encrypt-public-key">Public Key</label>
+                <textarea id="encrypt-public-key" placeholder="Paste the recipient's PUBLIC key here..."></textarea>
+            </div>
+
+            <button class="btn btn-primary">Encrypt Image</button>
+        </section>
+
+        <section id="decryptSection" class="tool-section">
+             <h2>Decrypt Your Message</h2>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Insert Encoded Image</h3>
+                </div>
+                <div class="form-group">
+                    <div class="file-input-box">
+                        <input type="file" id="decrypt-image" accept="image/png">
+                        <label for="decrypt-image" class="file-input-label">Upload the PNG you previously encoded.</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Settings</h3>
+                </div>
+                
+                <div class="form-group">
+                    <label for="decrypt-model">Encryption Model</label>
+                    <select id="decrypt-model">
+                        <option value="chacha20">ChaCha20</option>
+                        <option value="aes">AES</option>
+                        <option value="hybrid">Hybrid (RSA + AES)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="decrypt-steganography-model">Steganography Model</label>
+                    <select id="decrypt-steganography-model">
+                        <option value="lsb">LSB (Least Significant Bit)</option>
+                        <option value="dct">DCT (Discrete Cosine Transform)</option>
+                    </select>
+                </div>
+
+                <div id="decrypt-password-group" class="form-group">
+                    <label for="decrypt-password">Password</label>
+                    <input type="password" id="decrypt-password" placeholder="Enter the password">
+                </div>
+
+                <div id="decrypt-key-group" class="form-group hidden">
+                    <label for="decrypt-private-key">Private Key</label>
+                    <textarea id="decrypt-private-key" placeholder="Paste your PRIVATE key here..."></textarea>
+                </div>
+
+                <button class="btn btn-primary">Decrypt</button>
+            </div>
+        </section>
+
+        <section id="keygenSection" class="tool-section">
+            <div class="card">
+                <div class="card-header">
+                    <h3>RSA Key Pair Generation</h3>
+                </div>
+                <p style="opacity: 0.8; margin-bottom: 20px;">Generate a secure Public and Private key pair for use with the Hybrid encryption model. Share the Public Key with others; keep the Private Key secret.</p>
+                <button id="generate-keys-btn" class="key-button">
+                    <span class="key-icon">🔑</span> Generate Key Pair
+                </button>
+            </div>
+            <div id="key-display-area"></div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        © 2025 Crypt Chat
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Setup navigation and initial state
+            setupNavigation();
+            setupEventListeners();
+            updateFormFields('encrypt');
+            updateFormFields('decrypt');
+        });
+
+        // --- NAVIGATION ---
+        function showSection(sectionName) {
+            const sections = document.querySelectorAll('.tool-section, .hero, .features');
+            sections.forEach(section => section.style.display = 'none');
+            
+            const navButtons = document.querySelectorAll('.nav button');
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            
+            const heroSection = document.getElementById('startSection');
+            const featuresSection = document.querySelector('.features');
+
+            if (sectionName === 'start') {
+                heroSection.style.display = 'block';
+                featuresSection.style.display = 'grid';
+            } else {
+                const targetSection = document.getElementById(sectionName + 'Section');
+                if (targetSection) {
+                    targetSection.style.display = 'block';
+                }
+            }
+            
+            const activeButton = document.getElementById(sectionName + 'Btn');
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+
+        function setupNavigation() {
+            document.getElementById('startBtn').addEventListener('click', () => showSection('start'));
+            document.getElementById('encryptBtn').addEventListener('click', () => showSection('encrypt'));
+            document.getElementById('decryptBtn').addEventListener('click', () => showSection('decrypt'));
+            document.getElementById('keygenBtn').addEventListener('click', () => showSection('keygen'));
+            showSection('start'); // Show start section by default
+        }
+
+        // --- EVENT LISTENERS ---
+        function setupEventListeners() {
+            // Encrypt button
+            document.querySelector('#encryptSection .btn-primary').addEventListener('click', handleEncrypt);
+
+            // Decrypt button
+            document.querySelector('#decryptSection .btn-primary').addEventListener('click', handleDecrypt);
+
+            // Key generation button
+            document.getElementById('generate-keys-btn').addEventListener('click', handleGenerateKeys);
+
+            // Image preview
+            const encryptImageInput = document.getElementById('encrypt-image');
+            const imagePreview = document.getElementById('encrypt-image-preview');
+            encryptImageInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.src = '#';
+                    imagePreview.style.display = 'none';
+                }
+            });
+
+            // Model selection change listeners
+            document.getElementById('encrypt-model').addEventListener('change', () => updateFormFields('encrypt'));
+            document.getElementById('decrypt-model').addEventListener('change', () => updateFormFields('decrypt'));
+        }
+
+        // --- DYNAMIC UI LOGIC ---
+        function updateFormFields(mode) {
+            const model = document.getElementById(`${mode}-model`).value;
+            const passwordGroup = document.getElementById(`${mode}-password-group`);
+            const keyGroup = document.getElementById(`${mode}-key-group`);
+
+            if (model === 'hybrid') {
+                passwordGroup.classList.add('hidden');
+                keyGroup.classList.remove('hidden');
+            } else {
+                passwordGroup.classList.remove('hidden');
+                keyGroup.classList.add('hidden');
+            }
+        }
+        
+        // --- API HANDLERS ---
+        async function handleEncrypt() {
+            const imageFile = document.getElementById('encrypt-image').files[0];
+            const message = document.getElementById('encrypt-message').value;
+            const encryptionModel = document.getElementById('encrypt-model').value;
+            const steganographyModel = document.getElementById('encrypt-steganography-model').value;
+            
+            let key;
+            if (encryptionModel === 'hybrid') {
+                key = document.getElementById('encrypt-public-key').value;
+            } else {
+                key = document.getElementById('encrypt-password').value;
+            }
+
+            if (!imageFile) return showError('Please select a PNG image file', 'encrypt');
+            if (!message.trim()) return showError('Please enter a message to encrypt', 'encrypt');
+            if (!key.trim()) {
+                const keyType = encryptionModel === 'hybrid' ? 'public key' : 'password';
+                return showError(`Please enter a ${keyType}`, 'encrypt');
+            }
+
+            const button = document.querySelector('#encryptSection .btn-primary');
+            const originalText = button.textContent;
+            button.textContent = 'Encrypting...';
+            button.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('image', imageFile);
+                formData.append('text', message);
+                formData.append('key', key);
+                formData.append('algo', encryptionModel);
+                formData.append('stego', steganographyModel);
+
+                const response = await fetch('/encrypt_hide', { method: 'POST', body: formData });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'encrypted_image.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showSuccess('Message encrypted and hidden! Download started.', 'encrypt');
+                } else {
+                    const errorData = await response.json();
+                    showError(errorData.error || 'Encryption failed', 'encrypt');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message, 'encrypt');
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
+
+        async function handleDecrypt() {
+            const imageFile = document.getElementById('decrypt-image').files[0];
+            const encryptionModel = document.getElementById('decrypt-model').value;
+            const steganographyModel = document.getElementById('decrypt-steganography-model').value;
+
+            let key;
+            if (encryptionModel === 'hybrid') {
+                key = document.getElementById('decrypt-private-key').value;
+            } else {
+                key = document.getElementById('decrypt-password').value;
+            }
+
+            if (!imageFile) return showError('Please select an encrypted image file', 'decrypt');
+            if (!key.trim()) {
+                const keyType = encryptionModel === 'hybrid' ? 'private key' : 'password';
+                return showError(`Please enter the ${keyType}`, 'decrypt');
+            }
+
+            const button = document.querySelector('#decryptSection .btn-primary');
+            const originalText = button.textContent;
+            button.textContent = 'Decrypting...';
+            button.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('image', imageFile);
+                formData.append('key', key);
+                formData.append('algo', encryptionModel);
+                formData.append('stego', steganographyModel);
+
+                const response = await fetch('/unhide_decrypt', { method: 'POST', body: formData });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showDecryptedMessage(data.message);
+                } else {
+                    const errorData = await response.json();
+                    showError(errorData.error || 'Decryption failed', 'decrypt');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message, 'decrypt');
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
+
+        async function handleGenerateKeys() {
+            const button = document.getElementById('generate-keys-btn');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span class="key-icon">⏳</span> Generating...';
+            button.disabled = true;
+
+            try {
+                const response = await fetch('/generate_keys', { method: 'POST' });
+                if (response.ok) {
+                    const data = await response.json();
+                    showKeyPair(data.public_key, data.private_key);
+                } else {
+                    const errorData = await response.json();
+                    showError(errorData.error || 'Key generation failed', 'keygen');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message, 'keygen');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        // --- UI FEEDBACK ---
+        function showMessage(message, type, section) {
+            const activeSection = document.getElementById(section + 'Section');
+            if (!activeSection) return;
+
+            // Remove existing messages in that section
+            const existingMessages = activeSection.querySelectorAll('.message');
+            existingMessages.forEach(msg => msg.remove());
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type === 'success' ? 'result-message' : 'error-message'}`;
+            messageDiv.textContent = message;
+            
+            activeSection.appendChild(messageDiv);
+            setTimeout(() => messageDiv.remove(), 5000);
+        }
+
+        function showSuccess(message, section) { showMessage(message, 'success', section); }
+        function showError(message, section) { showMessage(message, 'error', section); }
+
+        function showDecryptedMessage(message) {
+            const decryptSection = document.getElementById('decryptSection');
+            const existingMessages = decryptSection.querySelectorAll('.message');
+            existingMessages.forEach(msg => msg.remove());
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message result-message';
+            messageDiv.innerHTML = `
+                <h4>Decrypted Message:</h4>
+                <p style="word-break: break-all; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; margin-top: 10px; white-space: pre-wrap;">${message}</p>
+            `;
+            decryptSection.appendChild(messageDiv);
+        }
+
+        function showKeyPair(publicKey, privateKey) {
+            const displayArea = document.getElementById('key-display-area');
+            displayArea.innerHTML = `
+                <div class="message result-message">
+                    <h4>Public Key:</h4>
+                    <textarea readonly>${publicKey}</textarea>
+                    <button class="btn btn-secondary" onclick="copyToClipboard(this, \`${publicKey.replace(/\\/g, '\\\\').replace(/`/g, '\\`')}\`)">Copy Public Key</button>
+                </div>
+                <div class="message result-message">
+                    <h4>Private Key: <span style="color: #fca5a5;">(Keep Secret!)</span></h4>
+                    <textarea readonly>${privateKey}</textarea>
+                    <button class="btn btn-secondary" onclick="copyToClipboard(this, \`${privateKey.replace(/\\/g, '\\\\').replace(/`/g, '\\`')}\`)">Copy Private Key</button>
+                </div>
+            `;
+        }
+
+        function copyToClipboard(button, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => button.textContent = originalText, 2000);
+            }).catch(err => {
+                showError('Failed to copy to clipboard', 'keygen');
+            });
+        }
+        // Make copyToClipboard globally accessible
+        window.copyToClipboard = copyToClipboard;
+    </script>
+</body>
+</html>
